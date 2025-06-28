@@ -53,12 +53,12 @@ echo -e "         \033[30;48;5;83m    Copyright \033[40;38;5;83m ${author}\033[0
 
 
 cleanup_options() {
-    read -p $'\n\e[1;35m Do you want to clean unnecessary logs? (y/n):y \e[0m' clean_logs
-    read -p $'\e[1;35m Do you want to clean cache files? (y/n):y \e[0m' clean_cache
-    read -p $'\e[1;35m Do you want to clean cached packages? (y/n):y \e[0m' clean_packages
-    read -p $'\e[1;35m Do you want to remove unnecessary or unused packages? (y/n):y \e[0m' clean_unused_packages
-    read -p $'\e[1;35m Do you want to clean temporary files? (y/n):y \e[0m' clean_temp
-    read -p $'\e[1;35m Do you want to clean temporary backup files? (y/n):y \e[0m' clean_temp_backup
+    read -p $'\n\e[1;35m Do you want to clean unnecessary logs? (y/n):-e -i y \e[0m' clean_logs
+    read -p $'\e[1;35m Do you want to clean cache files? (y/n):-e -i y \e[0m' clean_cache
+    read -p $'\e[1;35m Do you want to clean cached packages? (y/n):-e -i y \e[0m' clean_packages
+    read -p $'\e[1;35m Do you want to remove unnecessary or unused packages? (y/n):-e -i y \e[0m' clean_unused_packages
+    read -p $'\e[1;35m Do you want to clean temporary files? (y/n):-e -i y \e[0m' clean_temp
+    read -p $'\e[1;35m Do you want to clean temporary backup files? (y/n):-e -i y \e[0m' clean_temp_backup
 }
 
 # Function to clean cache files
