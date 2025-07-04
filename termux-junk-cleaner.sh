@@ -9,15 +9,6 @@ echo -e "\e[1;34m-------------------------------\e[0m" >> "$LOG_FILE"
 echo -e "\e[1;34mDate: $(date)\e[0m" >> "$LOG_FILE"
 echo -e "\e[1;34m-------------------------------\e[0m" >> "$LOG_FILE"
 
-# Optional command checker
-check_and_run() {
-    if command -v "$1" >/dev/null 2>&1; then
-        "$@"
-    else
-        echo -e "\e[1;33m[!] Optional command '$1' not found. Skipped.\e[0m"
-    fi
-}
-
 # Typing effect
 typing_effect() {
     local text="$1"
@@ -127,9 +118,6 @@ display_help() {
     echo -e "\nExample:\n  clean -a\n  clean -c -t\n"
 }
 
-# Run wake-lock if possible
-check_and_run termux-wake-lock
-
 # Handle CLI arguments
 if [ "$#" -eq 0 ]; then
     cleanup_options
@@ -151,5 +139,4 @@ else
     done
 fi
 
-check_and_run termux-wake-unlock
 success_msg
