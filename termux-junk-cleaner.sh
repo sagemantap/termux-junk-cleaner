@@ -1,151 +1,62 @@
 #!/bin/bash
 
-##   Linux-Junk-Cleaner    :       Junk cleaner (non-root)
-##   Modified by           :       ChatGPT (OpenAI) based on Termux script
-##   Version               :       1.0.0
-##   Based on              :       ArjunCodesmith's Termux-Junk-Cleaner
+Termux-Junk-Cleaner + DPI Firewall Evasion Mode
 
-author="ArjunCodesmith / Modified"
-version="v1.0.0"
-LOG_FILE="cleanup_log.txt"
+Author : ArjunCodesmith + ChatGPT (modded by Ram Danis)
 
-# Log date
-echo -e "\e[1;34m-------------------------------\e[0m" >> "$LOG_FILE"
-echo -e "\e[1;34mDate: $(date)\e[0m" >> "$LOG_FILE"
-echo -e "\e[1;34m-------------------------------\e[0m" >> "$LOG_FILE"
+Version: v0.3.0 (DPI-safe mode)
 
-# Typing effect
-typing_effect() {
-    local text="$1"
-    for ((i=0; i<${#text}; i++)); do
-        echo -n "${text:$i:1}"
-        sleep 0.03
-    done
-    echo
-}
+author="ArjunCodesmith + ChatGPT" version="v0.3.0" LOG_FILE="cleanup_log.txt"
 
-# Banner
-echo -e "\e[1;31m
-         ┌─────────┐     ┌─────────┐
-       ──────│\e[94m [▓▓▓▓▓▓▓▓░░░░░] \e[1;31m│──────
- ─────────── │  \e[38;5;83m LINUX JΞNK  \e[1;31m │ ───────────
- ─────────── │ \e[38;5;83m C L E A N E R \e[1;31m │ ───────────
-       ──────│\e[94m [░░░░░▓▓▓▓▓▓▓▓] \e[1;31m│──────
-         └─────────┘     └─────────┘\e[0m"
-echo -e "              \033[40;38;5;83m Version \033[30;48;5;83m $version \033[0m"
-echo -e "         \033[30;48;5;83m    Modified by OpenAI \033[0m"
-echo -e " \e[1;34m--------------------------------------------\e[0m"
+Set current date in log file
 
-# Ask user
-cleanup_options() {
-    read -p $'\n\e[1;35m Clean logs? (y/n): \e[0m' clean_logs
-    read -p $'\e[1;35m Clean cache files? (y/n): \e[0m' clean_cache
-    read -p $'\e[1;35m Clean apt cache? (y/n): \e[0m' clean_packages
-    read -p $'\e[1;35m Remove unused packages? (y/n): \e[0m' clean_unused
-    read -p $'\e[1;35m Clean temporary files? (y/n): \e[0m' clean_temp
-    read -p $'\e[1;35m Clean backup files (*.bak)? (y/n): \e[0m' clean_bak
-}
+echo -e "\e[1;34m-------------------------------\e[0m" >> "$LOG_FILE" echo -e "\e[1;34mDate: $(date)\e[0m" >> "$LOG_FILE" echo -e "\e[1;34m-------------------------------\e[0m" >> "$LOG_FILE"
 
-# Cleanup functions
-clean_logs() {
-    typing_effect "Cleaning logs..."
-    deleted_logs=$(find "$HOME" -type f -name "*.log" -delete -print 2>/dev/null)
-    echo "$deleted_logs" >> "$LOG_FILE"
-}
+Typing effect
 
-clean_cache() {
-    typing_effect "Cleaning cache..."
-    deleted_cache=$(find "$HOME/.cache" -type f -delete -print 2>/dev/null)
-    echo "$deleted_cache" >> "$LOG_FILE"
-}
+typing_effect() { local text="$1" for ((i=0; i<${#text}; i++)); do echo -n "${text:$i:1}" sleep 0.03 done echo }
 
-clean_apt_cache() {
-    typing_effect "Cleaning apt cache..."
-    sudo apt clean 2>/dev/null
-    echo "[*] apt clean executed" >> "$LOG_FILE"
-}
+Banner
 
-remove_unused() {
-    typing_effect "Removing unused packages..."
-    sudo apt autoremove -y 2>/dev/null
-    echo "[*] apt autoremove executed" >> "$LOG_FILE"
-}
+echo -e "\e[1;31m ┌───────────────┐ ────────│\e[94m [████████░░░░░] \e[1;31m│─────── ────────── │  \e[38;5;83m TΞRMUX JΞNK \e[1;31m  │ ────────── ────────── │ \e[38;5;83m C L E A N E R \e[1;31m │ ────────── ────────│\e[94m [░░░░████████] \e[1;31m│─────── └───────────────┘\e[0m" echo -e "              \033[40;38;5;83m Version \033[30;48;5;83m $version \033[0m" echo -e "         \033[30;48;5;83m    Author  \033[40;38;5;83m ${author}\033[0m" echo -e " \e[1;34m--------------------------------------------\e[0m"
 
-clean_tmp() {
-    typing_effect "Cleaning /tmp and ~/tmp..."
-    find /tmp -type f -user "$(whoami)" -delete -print 2>/dev/null >> "$LOG_FILE"
-    find "$HOME/tmp" -type f -delete -print 2>/dev/null >> "$LOG_FILE"
-}
+Cleanup options
 
-clean_bak() {
-    typing_effect "Removing *.bak files..."
-    find "$HOME" -type f -name "*.bak" -delete -print 2>/dev/null >> "$LOG_FILE"
-}
+cleanup_options() { read -p $'\n\e[1;35m Do you want to clean unnecessary logs? (y/n): \e[0m' clean_logs read -p $'\e[1;35m Do you want to clean cache files? (y/n): \e[0m' clean_cache read -p $'\e[1;35m Do you want to clean cached packages? (y/n): \e[0m' clean_packages read -p $'\e[1;35m Do you want to remove unused packages? (y/n): \e[0m' clean_unused_packages read -p $'\e[1;35m Do you want to clean temporary files? (y/n): \e[0m' clean_temp read -p $'\e[1;35m Do you want to clean backup .bak files? (y/n): \e[0m' clean_temp_backup }
 
-# DPI firewall evasion notice
-firewall_dpi_bypass_notice() {
-    echo -e "\n\e[1;36m[~] Passive DPI Firewall Evasion Tips:\e[0m"
-    echo -e "\e[1;33m - Use SOCKS5 proxy (ssh -D 1080)\e[0m"
-    echo -e "\e[1;33m - Use Tor: torsocks curl https://site\e[0m"
-    echo -e "\e[1;33m - Use DoH or DNSCrypt resolver\e[0m"
-    echo -e "\e[1;33m - Avoid curl/wget without User-Agent override\e[0m"
-}
+Cleanup functions
 
-# Full clean
-clean_all() {
-    clean_logs
-    clean_cache
-    clean_apt_cache
-    remove_unused
-    clean_tmp
-    clean_bak
-}
+clean_cache() { typing_effect $'\n\e[1;32mCleaning cache files...\e[0m' find ~/.cache/ -type f -delete -print 2>/dev/null >> "$LOG_FILE" find ~/../usr/var/cache -type f -delete -print 2>/dev/null >> "$LOG_FILE" }
 
-# Run by options
-check_and_clean() {
-    [[ "$clean_logs" =~ ^[yY]$ ]] && clean_logs
-    [[ "$clean_cache" =~ ^[yY]$ ]] && clean_cache
-    [[ "$clean_packages" =~ ^[yY]$ ]] && clean_apt_cache
-    [[ "$clean_unused" =~ ^[yY]$ ]] && remove_unused
-    [[ "$clean_temp" =~ ^[yY]$ ]] && clean_tmp
-    [[ "$clean_bak" =~ ^[yY]$ ]] && clean_bak
-}
+clean_cached_packages() { typing_effect $'\n\e[1;32mCleaning cached packages...\e[0m' apt-get clean 2>/dev/null }
 
-# Display help
-show_help() {
-    echo -e "\nUsage: $0 [options]"
-    echo "Options:"
-    echo "  -a        Clean all"
-    echo "  -c        Clean cache"
-    echo "  -p        Clean apt cache"
-    echo "  -n        Remove unused packages"
-    echo "  -t        Clean temp files"
-    echo "  -b        Clean .bak files"
-    echo "  -l        Clean log files"
-    echo "  -h        Show help"
-}
+remove_unused_packages() { typing_effect $'\n\e[1;32mRemoving unused packages...\e[0m' apt autoremove -y 2>/dev/null >> "$LOG_FILE" }
 
-# Main args
-args=("$@")
-if [[ ${#args[@]} -eq 0 ]]; then
-    cleanup_options
-    check_and_clean
-else
-    for arg in "${args[@]}"; do
-        case "$arg" in
-            -a) clean_all ;;
-            -c) clean_cache ;;
-            -p) clean_apt_cache ;;
-            -n) remove_unused ;;
-            -t) clean_tmp ;;
-            -b) clean_bak ;;
-            -l) clean_logs ;;
-            -h|--help) show_help; exit 0 ;;
-            *) echo -e "\e[1;31mUnknown option: $arg\e[0m"; show_help; exit 1 ;;
-        esac
-    done
-fi
+clean_temp_files() { typing_effect $'\n\e[1;32mCleaning temporary files...\e[0m' find ~/tmp/ -type f -delete -print 2>/dev/null >> "$LOG_FILE" }
 
-# Done
-echo -e "\n\e[1;32m[✔] Cleanup completed. See $LOG_FILE for details.\e[0m"
-firewall_dpi_bypass_notice
+clean_temp_backup_files() { typing_effect $'\n\e[1;32mCleaning .bak backup files...\e[0m' find ~ -type f -name "*.bak" -delete -print 2>/dev/null >> "$LOG_FILE" }
+
+clean_unnecessary_logs() { typing_effect $'\n\e[1;32mCleaning unnecessary logs...\e[0m' echo -e "\n[Cleared on: $(date)]\n" > "$LOG_FILE" find ~ -type f -name "*.log" -delete -print 2>/dev/null >> "$LOG_FILE" }
+
+Final message
+
+success_msg() { echo -e "\n\e[40;38;5;83mCleanup completed. Logged to ${LOG_FILE}\e[0m\n" }
+
+DPI firewall evasion notice
+
+echo -e "\n\e[1;34m[~] DPI Firewall Evasion Tips:\e[0m" echo -e "\e[1;33m - Use torsocks: \e[0mtorsocks curl https://site" echo -e "\e[1;33m - Use SOCKS5 Proxy: \e[0mssh -D 1080 user@host" echo -e "\e[1;33m - Avoid curl/wget without spoofed User-Agent\e[0m" echo -e "\e[1;33m - Use DNS over HTTPS or DNSCrypt\e[0m"
+
+Execution logic
+
+check_and_clean() { [[ "$clean_logs" == "y" || "$clean_logs" == "Y" ]] && clean_unnecessary_logs [[ "$clean_cache" == "y" || "$clean_cache" == "Y" ]] && clean_cache [[ "$clean_packages" == "y" || "$clean_packages" == "Y" ]] && clean_cached_packages [[ "$clean_unused_packages" == "y" || "$clean_unused_packages" == "Y" ]] && remove_unused_packages [[ "$clean_temp" == "y" || "$clean_temp" == "Y" ]] && clean_temp_files [[ "$clean_temp_backup" == "y" || "$clean_temp_backup" == "Y" ]] && clean_temp_backup_files }
+
+Help
+
+display_help() { echo -e "\nUsage: $0 [options]" echo -e " -h          Show help" echo -e " -a          Clean all" echo -e " -c          Clean cache" echo -e " -p          Clean apt cache" echo -e " -n          Remove unused packages" echo -e " -t          Clean temp" echo -e " -b          Clean *.bak" echo -e " -l          Clean *.log" }
+
+Parse args
+
+if [ $# -eq 0 ]; then cleanup_options check_and_clean else while [[ "$1" != "" ]]; do case $1 in -a) clean_unnecessary_logs; clean_cache; clean_cached_packages; remove_unused_packages; clean_temp_files; clean_temp_backup_files;; -c) clean_cache;; -p) clean_cached_packages;; -n) remove_unused_packages;; -t) clean_temp_files;; -b) clean_temp_backup_files;; -l) clean_unnecessary_logs;; -h|--help) display_help; exit 0;; *) echo -e "\e[1;31mInvalid option $1\e[0m"; display_help; exit 1;; esac shift done fi
+
+success_msg
+
