@@ -39,8 +39,8 @@ dpi_firewall_tips() {
 }
 
 check_proxy_status() {
-    echo -e "\n\e[1;36m[~] Checking SOCKS5 proxy on 127.0.0.1:1080...\e[0m"
-    curl --socks5-hostname 127.0.0.1:1080 -s https://ipinfo.io/ip >/dev/null 2>&1
+    echo -e "\n\e[1;36m[~] Checking SOCKS5 proxy on 24.199.99.228:1080...\e[0m"
+    curl --socks5-hostname 24.199.99.228:1080 -s https://ipinfo.io/ip >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         echo -e "\e[1;32m[✔] SOCKS5 proxy is active.\e[0m"
         echo "[SOCKS5 proxy active]" >> "$LOG_FILE"
